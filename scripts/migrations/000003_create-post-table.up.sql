@@ -1,12 +1,12 @@
 CREATE TABLE IF NOT EXISTS posts (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     post_title VARCHAR(250) NOT NULL,
-    post_content LONGTEXT NOT NULL,
-    post_hastags LONGTEXT NOT NULL,
+    post_content TEXT NOT NULL,
+    post_hastags TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    created_by LONGTEXT NOT NULL,
-    updated_by LONGTEXT NOT NULL
+    created_by TEXT NOT NULL,
+    updated_by TEXT NOT NULL
 
 );

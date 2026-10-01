@@ -1,74 +1,41 @@
 package configs
 
 import (
-	"github.com/spf13/viper"
+	"fmt"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 var config *Config
 
-type option struct {
-	configFolders []string
-	configFile    string
-	configType    string
-}
-
-func Init(opts ...Option) error {
-	opt := &option{
-		configFolders: getDefaultConfigFolder(),
-		configFile:    getDefaultConfigFile(),
-		configType:    getDefaultConfigType(),
-	}
-	for _, optFunc := range opts {
-		optFunc(opt)
-		
-	}
-	for _, configFolder := range opt.configFolders {
-		viper.AddConfigPath(configFolder)
-	}
-	viper.SetConfigName(opt.configFile)
-	viper.SetConfigType(opt.configType)
-	viper.AutomaticEnv()
-	config = new(Config)
-	err:= viper.ReadInConfig();
-	if err != nil{
+func Init() error {
+	if err := godotenv.Load(); err != nil && !os.IsNotExist(err) {
 		return err
 	}
-	return viper.Unmarshal(&config)
-}
 
-type Option func(*option)
-
-func getDefaultConfigFolder() []string {
-	return []string{"./configs"}
-}
-func getDefaultConfigFile() string {
-	return "config"
-}
-func getDefaultConfigType() string {
-	return "yaml"
-}
-
-func WithConfigFolder(configFolder []string) Option{
-	return func(opt *option){
-		opt.configFolders = configFolder
+	config = &Config{
+		Service: Service{
+			Port:      os.Getenv("PORT"),
+			SecretJWT: os.Getenv("SECRET_JWT"),
+		},
+		Database: Database{
+			DatabaseSourceName: os.Getenv("DATABASE_URL"),
+		},
 	}
+	if config.Service.Port == "" {
+		config.Service.Port = ":8080"
+	}
+	if config.Service.SecretJWT == "" || config.Database.DatabaseSourceName == "" {
+		return fmt.Errorf("PORT, SECRET_JWT, and DATABASE_URL must be set")
+	}
+	return nil
 }
 
-func WithConfigFile(configFile string) Option{
-	return func(opt *option){
-		opt.configFile= configFile
-	}
-}
-
-func WithConfigType(configType string) Option{
-	return func(opt *option){
-		opt.configType= configType
-	}
-}
-func Get() *Config{
+func Get() *Config {
 	if config == nil {
 		config = &Config{}
 	}
 	return config
-	
+
 }

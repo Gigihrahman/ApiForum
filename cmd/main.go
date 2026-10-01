@@ -19,34 +19,28 @@ func main() {
 	var (
 		cfg *configs.Config
 	)
-	err := configs.Init(
-		configs.WithConfigFolder(
-			[]string{"./internal/configs/"},
-		),
-		configs.WithConfigFile("config"),
-		configs.WithConfigType("yaml"),
-	)
-	
-	if err!= nil{
+	err := configs.Init()
+
+	if err != nil {
 		log.Fatal("gagal", err)
 	}
 	cfg = configs.Get()
-	log.Println("config",cfg)
+	log.Println("config", cfg)
 	db, err := internalsql.Connect(cfg.Database.DatabaseSourceName)
-	if err !=nil{
-		log.Fatal("gagal konek",err)
+	if err != nil {
+		log.Fatal("gagal konek", err)
 	}
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	membershipRepo := membershipRepo.NewRepository(db)
 	postRepo := postRepo.NewRepository(db)
 
-	membershipService := membershipSVC.NewService(cfg,membershipRepo)
-	postService := postSVC.NewService(cfg,postRepo)
+	membershipService := membershipSVC.NewService(cfg, membershipRepo)
+	postService := postSVC.NewService(cfg, postRepo)
 
 	membershipHandler := memberships.NewHandler(r, membershipService)
-	postHandler:= posts.NewHandler(r,postService)
-		
+	postHandler := posts.NewHandler(r, postService)
+
 	membershipHandler.RegisterRoute()
 	postHandler.RegisterRoute()
 
