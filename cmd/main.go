@@ -43,6 +43,7 @@ func main() {
 
 	membershipHandler.RegisterRoute()
 	postHandler.RegisterRoute()
+	log.Println("Server running on port", cfg.Service.Port)
 
 	r.Run(cfg.Service.Port)
 }
