@@ -1,6 +1,11 @@
 {
-  "build": {
-    "command": "go build -ldflags=\"-w -s\" -o out ./cmd"
+  "$schema": "https://schema.railpack.com",
+  "steps": {
+    "build": {
+      "commands": [
+        "go build -ldflags=\"-w -s\" -o out ./cmd"
+      ]
+    }
   },
   "deploy": {
     "startCommand": "./out"
