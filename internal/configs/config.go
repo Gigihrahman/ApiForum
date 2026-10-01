@@ -3,6 +3,7 @@ package configs
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -14,17 +15,23 @@ func Init() error {
 		return err
 	}
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	portNumber, err := strconv.Atoi(port)
+	if err != nil || portNumber < 1 || portNumber > 65535 {
+		return fmt.Errorf("PORT must be a number between 1 and 65535")
+	}
+
 	config = &Config{
 		Service: Service{
-			Port:      os.Getenv("PORT"),
+			Port:      fmt.Sprintf(":%d", portNumber),
 			SecretJWT: os.Getenv("SECRET_JWT"),
 		},
 		Database: Database{
 			DatabaseSourceName: os.Getenv("DATABASE_URL"),
 		},
-	}
-	if config.Service.Port == "" {
-		config.Service.Port = ":8080"
 	}
 	if config.Service.SecretJWT == "" || config.Database.DatabaseSourceName == "" {
 		return fmt.Errorf("PORT, SECRET_JWT, and DATABASE_URL must be set")
