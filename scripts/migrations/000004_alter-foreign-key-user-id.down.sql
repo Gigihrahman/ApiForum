@@ -1,2 +1,2 @@
-ALTER TABLE posts DROP FOREIGN KEY fk_user_id_posts;
-ALTER TABLE posts MODIFY COLUMN user_id INT;
+ALTER TABLE posts DROP CONSTRAINT IF EXISTS fk_user_id_posts;
+ALTER TABLE posts ALTER COLUMN user_id TYPE INT;

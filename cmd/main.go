@@ -25,7 +25,7 @@ func main() {
 		log.Fatal("gagal", err)
 	}
 	cfg = configs.Get()
-	log.Println("config", cfg)
+	log.Println("config loaded on port", cfg.Service.Port)
 	db, err := internalsql.Connect(cfg.Database.DatabaseSourceName)
 	if err != nil {
 		log.Fatal("gagal konek", err)
